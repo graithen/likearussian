@@ -1,2 +1,2 @@
-# likearussian
-Like a Russian
+# Like a Russian
+Shoot yourself with your friends!
