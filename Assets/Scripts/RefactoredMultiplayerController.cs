@@ -43,10 +43,17 @@ public class RefactoredMultiplayerController : MonoBehaviour
 
     //Turn & Score Related
     [Header("Turn & Scores")]
+    public GameObject GameOverPanel;
     public TextMeshProUGUI TurnName;
     public TextMeshProUGUI PotText, ScoreText, ScoreBoard;
     public int Pot = 12;
     public int Score = 0;
+    public bool IsGameOver;
+    public string WinnerName;
+    public string LosersList;
+    public TextMeshProUGUI WinnerText;
+    public TextMeshProUGUI LosersText;
+    public GameObject GameRematchButton;
 
 
     [Header("Audio")]
@@ -178,6 +185,22 @@ public class RefactoredMultiplayerController : MonoBehaviour
     {
         MenuActive = !MenuActive;
         MainMenu.SetActive(MenuActive);
+    }
+
+    public void RematchButton()
+    {
+        foreach (GameObject obj in Controllers)
+        {
+            obj.GetComponent<RefactoredMultiplayerController>().PV.RPC("RPC_ReloadLevel", RpcTarget.All);
+        }
+    }
+
+    public void LeaveButton()
+    {
+        if(PV.IsMine)
+        {
+            Debug.LogWarning("Leaving the game!");
+        }
     }
 
     void ChangeForfeitValues(bool forfeitValue, string buttonText)
@@ -410,6 +433,13 @@ public class RefactoredMultiplayerController : MonoBehaviour
     }
 
 
+
+    [PunRPC]
+    public void RPC_GameOver()
+    {
+        CheckWinner();
+    }
+
     [PunRPC]
     public void RPC_SyncScore(int pot, int score, string scoreList)
     {
@@ -417,8 +447,89 @@ public class RefactoredMultiplayerController : MonoBehaviour
         Score = score;
         ScoreBoard.text = scoreList;
 
+        if (PhotonNetwork.IsMasterClient && Pot == 0)
+        {
+            Debug.LogWarning("Triggering game over, as pot is now 0!");
+            IsGameOver = true;
+            PV.RPC("RPC_GameOver", RpcTarget.MasterClient);
+        }
+
         UpdateUI();
     }
+
+
+
+
+
+
+
+    void CheckWinner()
+    {
+        int winningScore = 0;
+
+        List<string> losers = new List<string>();
+
+        foreach (GameObject obj in Controllers)
+        {
+            int score = obj.GetComponent<RefactoredMultiplayerController>().Score;
+            if (score > winningScore)
+            {
+                winningScore = score;
+                WinnerName = obj.name;
+            }
+        }
+
+        foreach (GameObject obj in Controllers)
+        {
+            int score = obj.GetComponent<RefactoredMultiplayerController>().Score;
+            if (score < winningScore)
+            {
+                losers.Add(obj.name);
+            }
+        }
+
+        LosersList = BuildLoserList(losers);
+
+        Debug.Log("Winner " + WinnerName);
+        Debug.Log("Losers " + LosersList);
+
+        foreach (GameObject obj in Controllers)
+        {
+            obj.GetComponent<RefactoredMultiplayerController>().PV.RPC("RPC_SyncGameOver", RpcTarget.All, IsGameOver, WinnerName, LosersList);
+        }
+    }
+
+    [PunRPC]
+    public void RPC_SyncGameOver(bool gameOver, string victor, string loserList)
+    {
+
+        IsGameOver = gameOver;
+        GameOverPanel.SetActive(IsGameOver);
+
+        WinnerText.text = victor;
+        LosersText.text = loserList;
+
+        if (!PhotonNetwork.IsMasterClient)
+            GameRematchButton.SetActive(false);
+    }
+
+    [PunRPC]
+    public void RPC_ReloadLevel()
+    {
+        if (!PhotonNetwork.IsMasterClient)
+        {
+            Debug.LogError("PhotonNetwork : Trying to Load a level but we are not the master Client");
+        }
+        Debug.LogFormat("PhotonNetwork : Loading Level : {0}", PhotonNetwork.CurrentRoom.PlayerCount);
+        PhotonNetwork.LoadLevel("GameScene");
+    }
+
+
+
+
+
+
+
 
     //Should only run on the server, as clients have their own controller lists and they will be different
     string BuildScoreList()
@@ -437,5 +548,19 @@ public class RefactoredMultiplayerController : MonoBehaviour
 
         Debug.Log(scoreList.ToString());
         return scoreList.ToString();
+    }
+
+    string BuildLoserList(List<string> list)
+    {
+        StringBuilder loserList;
+        loserList = new StringBuilder("");
+        Debug.Log("OnJoinedRoom() called by PUN. Now this client is in a room.");
+        foreach (string str in list)
+        {
+            loserList.Append(name + "\n");
+        }
+
+        Debug.Log(loserList.ToString());
+        return loserList.ToString();
     }
 }
