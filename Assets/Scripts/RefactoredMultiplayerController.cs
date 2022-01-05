@@ -38,6 +38,9 @@ public class RefactoredMultiplayerController : MonoBehaviour
     public GameObject DrawButton, ShuffleButton;
     public TextMeshProUGUI ShuffleButtonText;
 
+    public GameObject MainMenu;
+    bool MenuActive;
+
     //Turn & Score Related
     [Header("Turn & Scores")]
     public TextMeshProUGUI TurnName;
@@ -100,6 +103,7 @@ public class RefactoredMultiplayerController : MonoBehaviour
         {
             IsPlayerTurn = true;
             ShuffleCards();
+            Pot = PlayerPrefs.GetInt("PotValue");
             
         }
         if (!PhotonNetwork.IsMasterClient)
@@ -133,7 +137,6 @@ public class RefactoredMultiplayerController : MonoBehaviour
         PotText.text = Pot.ToString();
         ScoreText.text = Score.ToString();
     }
-
     #endregion
 
 
@@ -169,6 +172,12 @@ public class RefactoredMultiplayerController : MonoBehaviour
             ShuffleButtonText.text = "Shuffle";
         }
         Forfeit = !Forfeit;
+    }
+
+    public void ToggleMainMenu()
+    {
+        MenuActive = !MenuActive;
+        MainMenu.SetActive(MenuActive);
     }
 
     void ChangeForfeitValues(bool forfeitValue, string buttonText)
@@ -261,7 +270,6 @@ public class RefactoredMultiplayerController : MonoBehaviour
 
 
     #region Shuffle Cards
-    
     //Triggers a card shuffle on the local player controller
     [PunRPC]
     public void RPC_Shuffle()
@@ -308,7 +316,6 @@ public class RefactoredMultiplayerController : MonoBehaviour
             }
         }
     }
-
     #endregion
 
 
@@ -349,6 +356,7 @@ public class RefactoredMultiplayerController : MonoBehaviour
 
             Debug.Log("Player turn " + PlayerTurn);
 
+            //Set all controllers player turn bool to false on the master client, just to be safe
             foreach (GameObject obj in Controllers)
             {
                 obj.GetComponent<RefactoredMultiplayerController>().IsPlayerTurn = false;
@@ -359,6 +367,7 @@ public class RefactoredMultiplayerController : MonoBehaviour
             Controllers[PlayerTurn].GetComponent<RefactoredMultiplayerController>().IsPlayerTurn = true;
             Controllers[PlayerTurn].GetComponent<RefactoredMultiplayerController>().ShuffleCards();
 
+            //update each controller on the master client 
             foreach (GameObject obj in Controllers)
             {
                 //trigger RPC calls to sync player turn on each client controller
@@ -388,7 +397,6 @@ public class RefactoredMultiplayerController : MonoBehaviour
     {
         TurnName.text = name;
     }
-
     #endregion
 
 

@@ -6,6 +6,8 @@ TagManager:
   tags:
   - NetworkUtility
   - MasterClient
+  - SoundSource
+  - MusicSource
   layers:
   - Default
   - TransparentFX

@@ -42,6 +42,13 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public TMP_Text RoomCodeText;
     public TMP_Text PlayerListText;
 
+    //Game Settings
+    public Slider PotSlider;
+    public TextMeshProUGUI PotNumberText;
+    
+    public GameObject MainMenu;
+    bool MenuActive;
+
     public List<string> RussianNames = new List<string>() { "Alexei", "Aleksandr", "Boris", "Anatoly", "Yuri", "Nikolai", "Viktor", "Artem", "Lev", "Daniil" };
     public List<string> CharacterDescriptions = new List<string>() { "A seedy Moscow businessman.", "A disgraced party member with nothing to lose.", "A mysterious stranger.", "A western spy, trying to blend in.", "A member of the mafia, looking for respect." };
     #endregion
@@ -76,12 +83,14 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
         ConnectMenuPanel.SetActive(ConnectMenuActive);
         RoomMenuPanel.SetActive(RoomMenuActive);
+
+        PlayerPrefs.SetInt("PotValue", Mathf.RoundToInt(PotSlider.value));
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        
     }
 
     #region Private Methods
@@ -212,6 +221,18 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     {
         PhotonNetwork.Disconnect();
         SceneManager.LoadScene(0);
+    }
+
+    public void PotSliderChange()
+    {
+        PlayerPrefs.SetInt("PotValue", Mathf.RoundToInt(PotSlider.value));
+        PotNumberText.text = PlayerPrefs.GetInt("PotValue").ToString();
+    }
+
+    public void ToggleMainMenu()
+    {
+        MenuActive = !MenuActive;
+        MainMenu.SetActive(MenuActive);
     }
     #endregion
 
