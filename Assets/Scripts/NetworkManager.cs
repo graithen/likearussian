@@ -50,7 +50,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     bool MenuActive;
 
     public List<string> RussianNames = new List<string>() { "Alexei", "Aleksandr", "Boris", "Anatoly", "Yuri", "Nikolai", "Viktor", "Artem", "Lev", "Daniil" };
-    public List<string> CharacterDescriptions = new List<string>() { "A seedy Moscow businessman.", "A disgraced party member with nothing to lose.", "A mysterious stranger.", "A western spy, trying to blend in.", "A member of the mafia, looking for respect." };
+    public List<string> CharacterDescriptions = new List<string>() { "A seedy Moscow businessman.", "A disgraced party member with nothing to lose.", "A mysterious stranger.", "A western spy, trying to blend in.", "A member of the mafia, looking for respect.", "A bored babushka, playing for kicks", "A nuclear reactor worker, heavily irradiated", "An army officer, playing for sport", "A revolutionary, showing off to the crowd", "A homeless beggar, playing for money", "A hopeless drunk, playing for vodka" };
     #endregion
 
 
@@ -69,7 +69,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     void Start()
     {
         RussianNames = new List<string>() { "Alexei", "Aleksandr", "Boris", "Anatoly", "Yuri", "Nikolai", "Viktor", "Artem", "Lev", "Daniil" };
-        CharacterDescriptions = new List<string>() { "A seedy Moscow businessman.", "A disgraced party member with nothing to lose.", "A mysterious stranger.", "A western spy, trying to blend in.", "A member of the mafia, looking for respect." };
+        CharacterDescriptions = new List<string>() { "A seedy Moscow businessman.", "A disgraced party member with nothing to lose.", "A mysterious stranger.", "A western spy, trying to blend in.", "A member of the mafia, looking for respect.", "A bored babushka, playing for kicks.", "A slight glowing nuclear reactor worker.", "An army officer, playing for sport.", "A revolutionary, showing off to the crowd.", "A homeless beggar, playing for money.", "A hopeless drunk, playing for vodka.", "A tired game developer looking for work." };
 
 
         // #Critical, we must first and foremost connect to Photon Online Server.
@@ -263,6 +263,11 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         GameStartButton.SetActive(PhotonNetwork.IsMasterClient);
 
         PlayerListText.text = CallPlayerList();
+
+        if(!PhotonNetwork.IsMasterClient)
+        {
+            PotSlider.interactable = false;
+        }
     }
 
     public override void OnJoinRoomFailed(short returnCode, string message)
