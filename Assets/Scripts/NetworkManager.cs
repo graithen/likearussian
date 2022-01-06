@@ -287,7 +287,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
         Status.text = newPlayer.NickName + " connected!";
     }
-
     #endregion
 
     System.Random random = new System.Random();
