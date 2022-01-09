@@ -14,19 +14,6 @@ public class NetworkUtility : MonoBehaviour
     PhotonView PV;
     public List<GameObject> Controllers;
 
-    public GameObject[] Cards = new GameObject[6];
-    public Sprite[] Sprites = new Sprite[6];
-    public Sprite CardBack;
-    public List<int> cardsHand = new List<int> { 0, 1, 2, 3, 4, 5 };
-    public List<int> cardsShuffled;
-    public int DrawCount = 0;
-
-    public TextMeshProUGUI ScoreText;
-    public TextMeshProUGUI PotText;
-    public int Pot = 12;
-
-    public AudioClip Gunshot, Hammer, Prepare;
-
     // Start is called before the first frame update
     void Start()
     {

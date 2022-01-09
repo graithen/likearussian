@@ -26,6 +26,7 @@ public class RefactoredMultiplayerController : MonoBehaviour
     //Network Related
     [Header("Network")]
     PhotonView PV;
+    NetworkController NC;
     NetworkUtility NetworkUtil;
     public List<GameObject> Controllers;
     public GameObject[] StartupDisableObject;
@@ -64,6 +65,7 @@ public class RefactoredMultiplayerController : MonoBehaviour
     private void Start()
     {
         PV = GetComponent<PhotonView>();
+        NC = GameObject.FindWithTag("NetworkController").GetComponent<NetworkController>();
         NetworkUtil = GameObject.FindWithTag("NetworkUtility").GetComponent<NetworkUtility>();
 
         NetworkUtil.AddController(this.gameObject);
@@ -89,6 +91,23 @@ public class RefactoredMultiplayerController : MonoBehaviour
     private void LateUpdate()
     {
         UpdateControllerList();
+
+        //Testing initialising UI - WARNING, THIS SENDS DATA CONSTANTLY AND NEEDS A BETTER WAY IF POSSIBLE!
+        if (PhotonNetwork.IsMasterClient)
+        {
+            string name = Controllers[PlayerTurn].gameObject.name;
+            foreach (GameObject obj in Controllers)
+            {
+                obj.GetComponent<RefactoredMultiplayerController>().PV.RPC("RPC_SyncTurnName", RpcTarget.AllBuffered, name);
+            }
+
+            string scoreBoard = BuildScoreList();
+            foreach (GameObject controller in Controllers)
+            {
+                controller.GetComponent<RefactoredMultiplayerController>().PV.RPC("RPC_SyncScore", RpcTarget.AllBuffered, Pot, controller.GetComponent<RefactoredMultiplayerController>().Score, scoreBoard);
+            }
+        }
+        //End of test
     }
 
 
@@ -96,7 +115,6 @@ public class RefactoredMultiplayerController : MonoBehaviour
 
     //GENERAL METHODS 
     #region General Methods
-    
     [PunRPC]
     public void RPC_ChangeName(string name)
     {
@@ -199,6 +217,7 @@ public class RefactoredMultiplayerController : MonoBehaviour
     {
         if(PV.IsMine)
         {
+            NC.LeaveRoom();
             Debug.LogWarning("Leaving the game!");
         }
     }
@@ -343,7 +362,6 @@ public class RefactoredMultiplayerController : MonoBehaviour
 
 
     #region Forfeit
-
     //Forfeit turn triggers a turn change. Done if players want to skip turn or have died
     [PunRPC]
     void RPC_Forfeit()
@@ -367,14 +385,14 @@ public class RefactoredMultiplayerController : MonoBehaviour
 
 
             //Sync turn name here so correct turn name is only triggered once on master client and not multiple times in UpdateUI
-            if (PhotonNetwork.IsMasterClient)
+            /*if (PhotonNetwork.IsMasterClient)
             {
                 string name = Controllers[PlayerTurn].gameObject.name;
                 foreach (GameObject obj in Controllers)
                 {
-                    obj.GetComponent<RefactoredMultiplayerController>().PV.RPC("RPC_ChangeTurnName", RpcTarget.AllBuffered, name);
+                    obj.GetComponent<RefactoredMultiplayerController>().PV.RPC("RPC_SyncTurnName", RpcTarget.AllBuffered, name);
                 }
-            }
+            }*/
 
 
             Debug.Log("Player turn " + PlayerTurn);
@@ -416,7 +434,7 @@ public class RefactoredMultiplayerController : MonoBehaviour
 
     //Change the name of the players UI name text that indicates who's turn it is
     [PunRPC]
-    public void RPC_ChangeTurnName(string name)
+    public void RPC_SyncTurnName(string name)
     {
         TurnName.text = name;
     }
@@ -426,6 +444,23 @@ public class RefactoredMultiplayerController : MonoBehaviour
 
 
     //These handle the UI and score changes!
+    [PunRPC]
+    public void RPC_SyncScore(int pot, int score, string scoreList)
+    {
+        Pot = pot;
+        Score = score;
+        ScoreBoard.text = scoreList;
+
+        if (PhotonNetwork.IsMasterClient && Pot == 0 && !IsGameOver)
+        {
+            Debug.LogWarning("Triggering game over, as pot is now 0!");
+            IsGameOver = true;
+            PV.RPC("RPC_GameOver", RpcTarget.MasterClient);
+        }
+
+        UpdateUI();
+    }
+
     void FailState()
     {
         DrawButton.SetActive(false);
@@ -437,24 +472,8 @@ public class RefactoredMultiplayerController : MonoBehaviour
     [PunRPC]
     public void RPC_GameOver()
     {
-        CheckWinner();
-    }
-
-    [PunRPC]
-    public void RPC_SyncScore(int pot, int score, string scoreList)
-    {
-        Pot = pot;
-        Score = score;
-        ScoreBoard.text = scoreList;
-
-        if (PhotonNetwork.IsMasterClient && Pot == 0)
-        {
-            Debug.LogWarning("Triggering game over, as pot is now 0!");
-            IsGameOver = true;
-            PV.RPC("RPC_GameOver", RpcTarget.MasterClient);
-        }
-
-        UpdateUI();
+        if(PhotonNetwork.IsMasterClient)
+            CheckWinner();
     }
 
 
@@ -465,37 +484,40 @@ public class RefactoredMultiplayerController : MonoBehaviour
 
     void CheckWinner()
     {
-        int winningScore = 0;
-
-        List<string> losers = new List<string>();
-
-        foreach (GameObject obj in Controllers)
+        if (PV.IsMine && PhotonNetwork.IsMasterClient)
         {
-            int score = obj.GetComponent<RefactoredMultiplayerController>().Score;
-            if (score > winningScore)
+            int winningScore = 0;
+
+            List<string> losers = new List<string>();
+
+            foreach (GameObject obj in Controllers)
             {
-                winningScore = score;
-                WinnerName = obj.name;
+                int score = obj.GetComponent<RefactoredMultiplayerController>().Score;
+                if (score > winningScore)
+                {
+                    winningScore = score;
+                    WinnerName = obj.name;
+                }
             }
-        }
 
-        foreach (GameObject obj in Controllers)
-        {
-            int score = obj.GetComponent<RefactoredMultiplayerController>().Score;
-            if (score < winningScore)
+            foreach (GameObject obj in Controllers)
             {
-                losers.Add(obj.name);
+                int score = obj.GetComponent<RefactoredMultiplayerController>().Score;
+                if (score < winningScore)
+                {
+                    losers.Add(obj.name);
+                }
             }
-        }
 
-        LosersList = BuildLoserList(losers);
+            LosersList = BuildLoserList(losers);
 
-        Debug.Log("Winner " + WinnerName);
-        Debug.Log("Losers " + LosersList);
+            Debug.Log("Winner " + WinnerName);
+            Debug.Log("Losers " + LosersList);
 
-        foreach (GameObject obj in Controllers)
-        {
-            obj.GetComponent<RefactoredMultiplayerController>().PV.RPC("RPC_SyncGameOver", RpcTarget.All, IsGameOver, WinnerName, LosersList);
+            foreach (GameObject obj in Controllers)
+            {
+                obj.GetComponent<RefactoredMultiplayerController>().PV.RPC("RPC_SyncGameOver", RpcTarget.All, IsGameOver, WinnerName, LosersList);
+            }
         }
     }
 
@@ -535,7 +557,7 @@ public class RefactoredMultiplayerController : MonoBehaviour
     string BuildScoreList()
     {
         StringBuilder scoreList;
-        scoreList = new StringBuilder("Player List:\n");
+        scoreList = new StringBuilder();
         Debug.Log("OnJoinedRoom() called by PUN. Now this client is in a room.");
         foreach (GameObject obj in Controllers)
         {
@@ -553,8 +575,8 @@ public class RefactoredMultiplayerController : MonoBehaviour
     string BuildLoserList(List<string> list)
     {
         StringBuilder loserList;
-        loserList = new StringBuilder("");
-        Debug.Log("OnJoinedRoom() called by PUN. Now this client is in a room.");
+        loserList = new StringBuilder();
+        Debug.Log("Building loser list!");
         foreach (string str in list)
         {
             loserList.Append(name + "\n");

@@ -49,7 +49,8 @@ public class GameLobbyUIController : MonoBehaviour
 
     public void StartGame()
     {
-        NC.LoadScene("GameScene");
+        NC.StartGame();
+        //NC.LoadScene("GameScene");
     }
 
     public void LeaveRoom()

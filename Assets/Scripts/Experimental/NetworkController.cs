@@ -53,6 +53,9 @@ public class NetworkController : MonoBehaviourPunCallbacks
     
     bool isMasterClient;
     public bool IsMasterClient { get { return isMasterClient; } }
+
+    bool hasProblem;
+    public bool HasProblem { get { return hasProblem; } }
     #endregion
 
     #region Public Fields
@@ -63,7 +66,10 @@ public class NetworkController : MonoBehaviourPunCallbacks
     public string RoomCode;
 
     public List<string> RussianNames = new List<string>() { "Alexei", "Aleksandr", "Boris", "Anatoly", "Yuri", "Nikolai", "Viktor", "Artem", "Lev", "Daniil" };
-    public List<string> CharacterDescriptions = new List<string>() { "A seedy Moscow businessman.", "A disgraced party member with nothing to lose.", "A mysterious stranger.", "A western spy, trying to blend in.", "A member of the mafia, looking for respect.", "A bored babushka, playing for kicks.", "A slight glowing nuclear reactor worker.", "An army officer, playing for sport.", "A revolutionary, showing off to the crowd.", "A homeless beggar, playing for money.", "A hopeless drunk, playing for vodka.", "A tired game developer looking for work." };
+    public List<string> CharacterDescriptions = new List<string>() { "A seedy Moscow businessman.", "A disgraced party member with nothing to lose.", "A mysterious stranger.", 
+        "A western spy, trying to blend in.", "A member of the mafia, looking for respect.", "A bored babushka, playing for kicks.", "A slight glowing nuclear reactor worker.", 
+        "An army officer, playing for sport.", "A revolutionary, showing off to the crowd.", "A homeless beggar, playing for money.", "A hopeless drunk, playing for vodka.", 
+        "An enthusiastic game developer looking for work.", "You really don't know how you got here..." };
     #endregion
 
 
@@ -142,6 +148,21 @@ public class NetworkController : MonoBehaviourPunCallbacks
         }
     }
 
+    public void StartGame()
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            if (PhotonNetwork.CurrentRoom.PlayerCount > 1)
+            {
+                LoadScene("GameScene");
+            }
+            if (PhotonNetwork.CurrentRoom.PlayerCount <= 1)
+            {
+                Debug.Log("Not enough players to start a game!");
+            }
+        }
+    }
+
     public void LoadScene(string sceneName)
     {
         if (!PhotonNetwork.IsMasterClient)
@@ -165,7 +186,6 @@ public class NetworkController : MonoBehaviourPunCallbacks
         
     }
 
-    
 
     #region MonoBehaviourPunCallbacks Callbacks
     public override void OnConnectedToMaster()
