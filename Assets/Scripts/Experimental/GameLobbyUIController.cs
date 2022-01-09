@@ -21,7 +21,6 @@ public class GameLobbyUIController : MonoBehaviour
     void Start()
     {
         NC = GameObject.FindGameObjectWithTag("NetworkController").GetComponent<NetworkController>();
-        RoomCodeText.text = NC.RoomCode;
     }
 
     // Update is called once per frame
@@ -39,6 +38,8 @@ public class GameLobbyUIController : MonoBehaviour
     void UpdateRoom()
     {
         bool isMasterClient = NC.IsMasterClient;
+
+        RoomCodeText.text = NC.RoomCode;
 
         GameStartButton.SetActive(isMasterClient);
 

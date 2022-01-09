@@ -12,6 +12,11 @@ using System.Linq;
 
 public class NetworkController : MonoBehaviourPunCallbacks
 {
+    [Header("Linking")]
+    public GameObject ErrorMessagePanel;
+    public TextMeshProUGUI ErrorText;
+    public GameObject MenuMusic;
+
     void Awake()
     {
         // #Critical
@@ -28,11 +33,14 @@ public class NetworkController : MonoBehaviourPunCallbacks
         PhotonNetwork.ConnectUsingSettings();
         PhotonNetwork.GameVersion = gameVersion;
 
+        ErrorMessagePanel.SetActive(false);
+        MenuMusicActivation(true);
+        isInGame = false;
     }
 
     private void LateUpdate()
     {
-        CheckClientStatus();
+        CheckStatus();
     }
 
     #region Private Serializable Fields
@@ -54,8 +62,8 @@ public class NetworkController : MonoBehaviourPunCallbacks
     bool isMasterClient;
     public bool IsMasterClient { get { return isMasterClient; } }
 
-    bool hasProblem;
-    public bool HasProblem { get { return hasProblem; } }
+    bool isInGame;
+    public bool IsInGame { get { return isInGame; } set { isInGame = value; } }
     #endregion
 
     #region Public Fields
@@ -69,18 +77,30 @@ public class NetworkController : MonoBehaviourPunCallbacks
     public List<string> CharacterDescriptions = new List<string>() { "A seedy Moscow businessman.", "A disgraced party member with nothing to lose.", "A mysterious stranger.", 
         "A western spy, trying to blend in.", "A member of the mafia, looking for respect.", "A bored babushka, playing for kicks.", "A slight glowing nuclear reactor worker.", 
         "An army officer, playing for sport.", "A revolutionary, showing off to the crowd.", "A homeless beggar, playing for money.", "A hopeless drunk, playing for vodka.", 
-        "An enthusiastic game developer looking for work.", "You really don't know how you got here..." };
+        "An enthusiastic game developer looking for work.", "You really don't know how you got here...", "A devilish mercenary from the Urals with an amazing moustache.", 
+        "A vodka salesman putting in serious overtime.", "Two dogs in an overcoat, pretending to be human.", "The man who walked into a bar and said ouch.", 
+        "Very Russian and not at all sus...", "A" };
     #endregion
 
 
-    void CheckClientStatus()
+    void CheckStatus()
     {
         //Runs in late update to see if any change to client status
         isMasterClient = PhotonNetwork.IsMasterClient;
-
         //Could also log connection status here
     }
 
+    public void DisplayErrorMessage(string message)
+    {
+        ErrorText.text = message;
+        ErrorMessagePanel.SetActive(true);
+    }
+
+    public void CloseErrorPanel()
+    {
+        ErrorMessagePanel.SetActive(false);
+        ErrorText.text = "";
+    }
 
     public void SetNickname(string str)
     {
@@ -140,6 +160,10 @@ public class NetworkController : MonoBehaviourPunCallbacks
             PhotonNetwork.JoinRoom(roomCode);
             status = "Joining room " + roomCode + "...";
         }
+        if (PhotonNetwork.IsConnected && string.IsNullOrWhiteSpace(roomCode))
+        {
+            DisplayErrorMessage("Please enter a room code!");
+        }
         else
         {
             // #Critical, we must first and foremost connect to Photon Online Server.
@@ -159,6 +183,7 @@ public class NetworkController : MonoBehaviourPunCallbacks
             if (PhotonNetwork.CurrentRoom.PlayerCount <= 1)
             {
                 Debug.Log("Not enough players to start a game!");
+                DisplayErrorMessage("Not enough players to start a game!");
             }
         }
     }
@@ -184,6 +209,11 @@ public class NetworkController : MonoBehaviourPunCallbacks
         PhotonNetwork.Disconnect();
         SceneManager.LoadScene(0);
         
+    }
+
+    public void MenuMusicActivation(bool value)
+    {
+        MenuMusic.SetActive(value);
     }
 
 

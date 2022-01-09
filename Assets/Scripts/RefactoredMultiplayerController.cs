@@ -73,6 +73,12 @@ public class RefactoredMultiplayerController : MonoBehaviour
 
         if(PV.IsMine)
         {
+            NC.IsInGame = true;
+            NC.MenuMusicActivation(false);
+            
+            //Close room to late joiners trying to get in!
+            PhotonNetwork.CurrentRoom.IsOpen = false;
+            
             PV.RPC("RPC_ChangeName", RpcTarget.AllBuffered, PhotonNetwork.NickName);
         }
 
