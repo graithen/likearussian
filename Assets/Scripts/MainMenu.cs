@@ -21,8 +21,6 @@ public class MainMenu : MonoBehaviour
     void Start()
     {
         this.gameObject.SetActive(false);
-        SetAudioVolumes();
-        UpdateAudioVolumes();
 
         foreach (GameObject source in GameObject.FindGameObjectsWithTag("MusicSource"))
         { 
@@ -32,6 +30,9 @@ public class MainMenu : MonoBehaviour
         {
             SoundSources.Add(source.GetComponent<AudioSource>());
         }
+
+        UpdateAudioVolumes();
+        UpdateSliderValues();
     }
 
     // Update is called once per frame
@@ -76,6 +77,12 @@ public class MainMenu : MonoBehaviour
             Debug.Log("No audio values in player prefs, creating them!");
             SetAudioVolumes();
         }
+    }
+
+    void UpdateSliderValues()
+    {
+       MusicSlider.value = PlayerPrefs.GetFloat("MusicVolume");
+       SoundSlider.value = PlayerPrefs.GetFloat("SoundVolume");
     }
 
     public void QuitGame()

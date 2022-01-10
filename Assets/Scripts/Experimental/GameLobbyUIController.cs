@@ -21,6 +21,9 @@ public class GameLobbyUIController : MonoBehaviour
     void Start()
     {
         NC = GameObject.FindGameObjectWithTag("NetworkController").GetComponent<NetworkController>();
+
+        //Set to default on start
+        PotSliderChange();
     }
 
     // Update is called once per frame

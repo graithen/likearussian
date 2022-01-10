@@ -184,7 +184,7 @@ public class RefactoredMultiplayerController : MonoBehaviour
         {
             //send rpc to server to draw card
             PV.RPC("RPC_ServerDrawCard", RpcTarget.MasterClient);
-            ChangeForfeitValues(true, "Forfeit");
+            ChangeForfeitValues(true, "Pass");
         }
     }
 
@@ -195,7 +195,7 @@ public class RefactoredMultiplayerController : MonoBehaviour
         {
             PV.RPC("RPC_Shuffle", RpcTarget.MasterClient);
             PlayAudio(Prepare);
-            ShuffleButtonText.text = "Forfeit";
+            ShuffleButtonText.text = "Pass";
         }
         if (Forfeit)
         {
@@ -389,18 +389,6 @@ public class RefactoredMultiplayerController : MonoBehaviour
             if (PlayerTurn > Controllers.Count - 1)
                 PlayerTurn = 0;
 
-
-            //Sync turn name here so correct turn name is only triggered once on master client and not multiple times in UpdateUI
-            /*if (PhotonNetwork.IsMasterClient)
-            {
-                string name = Controllers[PlayerTurn].gameObject.name;
-                foreach (GameObject obj in Controllers)
-                {
-                    obj.GetComponent<RefactoredMultiplayerController>().PV.RPC("RPC_SyncTurnName", RpcTarget.AllBuffered, name);
-                }
-            }*/
-
-
             Debug.Log("Player turn " + PlayerTurn);
 
             //Set all controllers player turn bool to false on the master client, just to be safe
@@ -470,7 +458,7 @@ public class RefactoredMultiplayerController : MonoBehaviour
     void FailState()
     {
         DrawButton.SetActive(false);
-        ChangeForfeitValues(true, "Forfeit");
+        ChangeForfeitValues(true, "Pass");
     }
 
 
@@ -551,10 +539,6 @@ public class RefactoredMultiplayerController : MonoBehaviour
         Debug.LogFormat("PhotonNetwork : Loading Level : {0}", PhotonNetwork.CurrentRoom.PlayerCount);
         PhotonNetwork.LoadLevel("GameScene");
     }
-
-
-
-
 
 
 

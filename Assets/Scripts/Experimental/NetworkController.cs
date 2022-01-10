@@ -12,7 +12,11 @@ using System.Linq;
 
 public class NetworkController : MonoBehaviourPunCallbacks
 {
+    public static NetworkController instance = null;
+
     [Header("Linking")]
+    public GameObject InstructionsPanel;
+    public GameObject InstructionButton;
     public GameObject ErrorMessagePanel;
     public TextMeshProUGUI ErrorText;
     public GameObject MenuMusic;
@@ -22,8 +26,15 @@ public class NetworkController : MonoBehaviourPunCallbacks
         // #Critical
         // this makes sure we can use PhotonNetwork.LoadLevel() on the master client and all clients in the same room sync their level automatically
         PhotonNetwork.AutomaticallySyncScene = true;
-        
-        Object.DontDestroyOnLoad(this.gameObject);
+
+        //Handles making sure the network object is consistent and prevents duplication, similar to singleton
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+            Destroy(gameObject);
     }
 
     // Start is called before the first frame update
@@ -36,6 +47,7 @@ public class NetworkController : MonoBehaviourPunCallbacks
         ErrorMessagePanel.SetActive(false);
         MenuMusicActivation(true);
         isInGame = false;
+        InstructionsPanel.SetActive(instructionsActive);
     }
 
     private void LateUpdate()
@@ -64,6 +76,8 @@ public class NetworkController : MonoBehaviourPunCallbacks
 
     bool isInGame;
     public bool IsInGame { get { return isInGame; } set { isInGame = value; } }
+
+    bool instructionsActive;
     #endregion
 
     #region Public Fields
@@ -75,7 +89,7 @@ public class NetworkController : MonoBehaviourPunCallbacks
 
     public List<string> RussianNames = new List<string>() { "Alexei", "Aleksandr", "Boris", "Anatoly", "Yuri", "Nikolai", "Viktor", "Artem", "Lev", "Daniil" };
     public List<string> CharacterDescriptions = new List<string>() { "A seedy Moscow businessman.", "A disgraced party member with nothing to lose.", "A mysterious stranger.", 
-        "A western spy, trying to blend in.", "A member of the mafia, looking for respect.", "A bored babushka, playing for kicks.", "A slight glowing nuclear reactor worker.", 
+        "A western spy, trying to blend in.", "A member of the mafia, looking for respect.", "A bored babushka, playing for kicks.", "A slighty glowing nuclear reactor worker.", 
         "An army officer, playing for sport.", "A revolutionary, showing off to the crowd.", "A homeless beggar, playing for money.", "A hopeless drunk, playing for vodka.", 
         "An enthusiastic game developer looking for work.", "You really don't know how you got here...", "A devilish mercenary from the Urals with an amazing moustache.", 
         "A vodka salesman putting in serious overtime.", "Two dogs in an overcoat, pretending to be human.", "The man who walked into a bar and said ouch.", 
@@ -100,6 +114,14 @@ public class NetworkController : MonoBehaviourPunCallbacks
     {
         ErrorMessagePanel.SetActive(false);
         ErrorText.text = "";
+    }
+
+
+    public void ToggleInstructions()
+    {
+        instructionsActive = !instructionsActive; 
+        InstructionsPanel.SetActive(instructionsActive);
+        InstructionButton.SetActive(!instructionsActive);
     }
 
     public void SetNickname(string str)
@@ -253,6 +275,9 @@ public class NetworkController : MonoBehaviourPunCallbacks
     public override void OnLeftRoom()
     {
         LoadScene("StartScene");
+        
+        isInGame = false;
+        MenuMusic.SetActive(!isInGame);
     }
 
     public override void OnPlayerEnteredRoom(Player newPlayer)
