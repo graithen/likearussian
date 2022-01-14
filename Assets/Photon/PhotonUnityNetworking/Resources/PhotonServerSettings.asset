@@ -72,6 +72,7 @@ MonoBehaviour:
   - RPC_CheckWinner
   - RPC_SyncTurnName
   - FailState
+  - RPC_SyncGameMode
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

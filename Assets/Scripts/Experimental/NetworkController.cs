@@ -173,7 +173,7 @@ public class NetworkController : MonoBehaviourPunCallbacks
     public void JoinRoomWithCode(string code)
     {
         roomCode = code;
-        roomCode.ToUpper();
+        roomCode = roomCode.ToUpper();
         status = "Connecting to " + roomCode + "...";
 
         // we check if we are connected or not, we join if we are , else we initiate the connection to the server.

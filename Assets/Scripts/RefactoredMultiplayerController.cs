@@ -59,7 +59,7 @@ public class RefactoredMultiplayerController : MonoBehaviour
 
     [Header("Audio")]
     public AudioSource Audio;
-    public AudioClip Gunshot, Hammer, Prepare, Cheer, Dissapoint;
+    public AudioClip Gunshot, Hammer, Prepare, Gasp, Dissapoint;
 
 
     private void Start()
@@ -153,6 +153,7 @@ public class RefactoredMultiplayerController : MonoBehaviour
 
     void PlayAudio(AudioClip audio)
     {
+        Audio.pitch = Random.Range(0.9f, 1.1f);
         Audio.PlayOneShot(audio);
     }
 
@@ -199,6 +200,9 @@ public class RefactoredMultiplayerController : MonoBehaviour
         }
         if (Forfeit)
         {
+            DrawButton.SetActive(false);
+            ShuffleButton.SetActive(false);
+
             PV.RPC("RPC_Forfeit", RpcTarget.MasterClient);
             ShuffleButtonText.text = "Shuffle";
         }
@@ -265,6 +269,8 @@ public class RefactoredMultiplayerController : MonoBehaviour
         {
             Pot += Score;
             Score = 0;
+
+            DrawButton.SetActive(false);
             
             string scoreBoard = BuildScoreList();
 
@@ -305,6 +311,9 @@ public class RefactoredMultiplayerController : MonoBehaviour
     {
         //get the local values of drawcount and card value, as these should now be stored!
         Cards[DrawCount].GetComponent<Image>().sprite = Sprites[DrawnCardArray[DrawCount]];
+
+        if (DrawCount == 4)
+            PlayAudio(Gasp);
 
         if (DrawnCardArray[DrawCount] == 5)
         {

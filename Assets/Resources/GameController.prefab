@@ -1783,7 +1783,7 @@ RectTransform:
   m_GameObject: {fileID: 3382084086459293204}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.15362, y: 1.15362, z: 1.15362}
+  m_LocalScale: {x: 1.3660015, y: 1.3660015, z: 1.3660015}
   m_Children:
   - {fileID: 3382084086672685833}
   m_Father: {fileID: 3382084087142852985}
@@ -2247,7 +2247,7 @@ MonoBehaviour:
   Gunshot: {fileID: 8300000, guid: 3f047fa9b061b3640974abd1b5500532, type: 3}
   Hammer: {fileID: 8300000, guid: 01d28732d2202c346b409ed19de1ca91, type: 3}
   Prepare: {fileID: 8300000, guid: e103e10b21e41c44ba8f079608e9b382, type: 3}
-  Cheer: {fileID: 0}
+  Gasp: {fileID: 8300000, guid: 45bf8f9960a720549ac89b606ef871cc, type: 3}
   Dissapoint: {fileID: 8300000, guid: 5304e7bdd335dbb4aaf7d4dbe60fa24b, type: 3}
 --- !u!1 &3382084086648909229
 GameObject:

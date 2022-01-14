@@ -16,6 +16,7 @@ public class GameLobbyUIController : MonoBehaviour
     public TextMeshProUGUI PlayerListText;
     public TextMeshProUGUI PotNumberText;
     public Slider PotSlider;
+    public Toggle TwoBulletToggle;
 
     // Start is called before the first frame update
     void Start()
@@ -24,6 +25,7 @@ public class GameLobbyUIController : MonoBehaviour
 
         //Set to default on start
         PotSliderChange();
+        TwoBulletToggleChange();
     }
 
     // Update is called once per frame
@@ -38,6 +40,21 @@ public class GameLobbyUIController : MonoBehaviour
         PotNumberText.text = PlayerPrefs.GetInt("PotValue").ToString();
     }
 
+    public void TwoBulletToggleChange()
+    {
+        if (TwoBulletToggle.isOn)
+        {
+            PlayerPrefs.SetInt("TwoBulletMode", 1);
+            Debug.Log("Two Bullet Mode set to on!");
+        }
+
+        if (!TwoBulletToggle.isOn)
+        {
+            PlayerPrefs.SetInt("TwoBulletValue", 0);
+            Debug.Log("Two Bullet Mode set to off!");
+        }
+    }
+
     void UpdateRoom()
     {
         bool isMasterClient = NC.IsMasterClient;
@@ -49,6 +66,8 @@ public class GameLobbyUIController : MonoBehaviour
         PlayerListText.text = NC.CallPlayerList();
 
         PotSlider.interactable = isMasterClient;
+
+        TwoBulletToggle.interactable = isMasterClient;
     }
 
     public void StartGame()
