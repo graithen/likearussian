@@ -17,6 +17,7 @@ public class NetworkController : MonoBehaviourPunCallbacks
     [Header("Linking")]
     public GameObject InstructionsPanel;
     public GameObject InstructionButton;
+    public GameObject OptionsMenu;
     public GameObject ErrorMessagePanel;
     public TextMeshProUGUI ErrorText;
     public GameObject MenuMusic;
@@ -77,6 +78,7 @@ public class NetworkController : MonoBehaviourPunCallbacks
     bool isInGame;
     public bool IsInGame { get { return isInGame; } set { isInGame = value; } }
 
+    private bool menuActive;
     bool instructionsActive;
     #endregion
 
@@ -116,6 +118,11 @@ public class NetworkController : MonoBehaviourPunCallbacks
         ErrorText.text = "";
     }
 
+    public void ToggleMenu()
+    {
+        menuActive = !menuActive;
+        OptionsMenu.SetActive(menuActive);
+    }
 
     public void ToggleInstructions()
     {

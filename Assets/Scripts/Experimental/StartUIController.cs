@@ -8,11 +8,9 @@ using UnityEngine.UI;
 public class StartUIController : MonoBehaviour
 {
     public NetworkController NC;
-    private bool menuActive;
 
     [Header("UI Linking")]
     public GameObject ConnectionPanel;
-    public GameObject OptionsMenu;
     public TMP_InputField NicknameField;
     public TMP_InputField RoomCodeField;
     public TextMeshProUGUI NameText;
@@ -49,12 +47,6 @@ public class StartUIController : MonoBehaviour
     public void CreateRoom()
     {
         NC.CreateRoom();
-    }
-
-    public void ToggleMenu()
-    {
-        menuActive = !menuActive;
-        OptionsMenu.SetActive(menuActive);
     }
 
     void UpdateNameValues()

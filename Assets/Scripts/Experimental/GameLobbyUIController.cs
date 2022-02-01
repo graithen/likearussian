@@ -8,9 +8,7 @@ using UnityEngine.UI;
 public class GameLobbyUIController : MonoBehaviour
 {
     public NetworkController NC;
-    bool menuActive;
 
-    public GameObject OptionsMenu;
     public GameObject GameStartButton;
     public TextMeshProUGUI RoomCodeText;
     public TextMeshProUGUI PlayerListText;
@@ -79,11 +77,5 @@ public class GameLobbyUIController : MonoBehaviour
     public void LeaveRoom()
     {
         NC.LeaveRoom();
-    }
-
-    public void ToggleMenu()
-    {
-        menuActive = !menuActive;
-        OptionsMenu.SetActive(menuActive);
     }
 }

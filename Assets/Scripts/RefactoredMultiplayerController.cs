@@ -94,6 +94,11 @@ public class RefactoredMultiplayerController : MonoBehaviour
         InitializePlayerTurn();
     }
 
+    private void Update()
+    {
+        ConnectionTimer();
+    }
+
     private void LateUpdate()
     {
         UpdateControllerList();
@@ -181,12 +186,14 @@ public class RefactoredMultiplayerController : MonoBehaviour
     //BUTTON METHODS
     public void DrawCardButton()
     {
-        if (PV.IsMine)
+        if (PV.IsMine && CanPressButton)
         {
             //send rpc to server to draw card
             PV.RPC("RPC_ServerDrawCard", RpcTarget.MasterClient);
             ChangeForfeitValues(true, "Pass");
         }
+
+        CanPressButton = false;
     }
 
     public void ForfeitShuffleButton()
@@ -461,6 +468,9 @@ public class RefactoredMultiplayerController : MonoBehaviour
             PV.RPC("RPC_GameOver", RpcTarget.MasterClient);
         }
 
+        CanPressButton = true;
+        ResetTimer();
+
         UpdateUI();
     }
 
@@ -583,5 +593,27 @@ public class RefactoredMultiplayerController : MonoBehaviour
 
         Debug.Log(loserList.ToString());
         return loserList.ToString();
+    }
+
+
+    public bool CanPressButton = true;
+    public bool TimerActive;
+    public float timer = 0;
+    void ConnectionTimer()
+    {
+        if(TimerActive)
+            timer += Time.deltaTime;
+
+        if (timer > 10f)
+        {
+            NC.DisplayErrorMessage("Your connection is unstable. We will have it flogged!");
+            timer = 0;
+        }
+    }
+
+    private void ResetTimer()
+    {
+        TimerActive = false;
+        timer = 0;
     }
 }
