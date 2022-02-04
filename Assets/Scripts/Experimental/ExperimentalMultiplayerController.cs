@@ -104,7 +104,7 @@ public class ExperimentalMultiplayerController : MonoBehaviour
     {
         if (PV.IsMine)
         {
-            DrawButton.GetComponent<Button>().interactable = !DrawButton.GetComponent<Button>().interactable;
+            DrawButton.GetComponent<Button>().interactable = false;
             NetworkDealer.DrawCard();
         }
     }
@@ -114,7 +114,7 @@ public class ExperimentalMultiplayerController : MonoBehaviour
     {
         if (PV.IsMine)
         {
-            ShuffleButton.GetComponent<Button>().interactable = !ShuffleButton.GetComponent<Button>().interactable;
+            ShuffleButton.GetComponent<Button>().interactable = false;
             
             //Toggle between forfeiting and shuffling
             if (!Forfeit)
@@ -167,7 +167,7 @@ public class ExperimentalMultiplayerController : MonoBehaviour
         if (PV.IsMine)
         {
             //Enable the button again because server has returned the action
-            DrawButton.GetComponent<Button>().interactable = !DrawButton.GetComponent<Button>().interactable;
+            DrawButton.GetComponent<Button>().interactable = true;
 
             //get the local values of drawcount and card value, as these should now be stored!
             Cards[drawCount].GetComponent<Image>().sprite = Sprites[cardValue];
@@ -192,15 +192,20 @@ public class ExperimentalMultiplayerController : MonoBehaviour
     {
         if (PV.IsMine)
         {
-            ShuffleButton.GetComponent<Button>().interactable = !ShuffleButton.GetComponent<Button>().interactable;
+            ShuffleButton.GetComponent<Button>().interactable = true;
             foreach (GameObject card in Cards)
             {
                 card.GetComponent<Image>().sprite = CardBack;
             }
             PlayAudio(Prepare);
+
+            ChangeForfeitValues(false, "Shuffle");
         }
     }
     #endregion
+
+
+
 
     #region Turn Logic
 
