@@ -616,4 +616,9 @@ public class RefactoredMultiplayerController : MonoBehaviour
         TimerActive = false;
         timer = 0;
     }
+
+    private void OnDestroy()
+    {
+        Debug.LogError("Controller destroyed!");
+    }
 }

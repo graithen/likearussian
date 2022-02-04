@@ -19,7 +19,10 @@ public class NetworkUtility : MonoBehaviour
     void Start()
     {
         NC = GameObject.FindGameObjectWithTag("NetworkController").GetComponent<NetworkController>();
-        GameObject SpawnedObject = PhotonNetwork.Instantiate("GameController", Vector3.zero, Quaternion.identity);
+        GameObject SpawnedObject = PhotonNetwork.Instantiate("ExperimentalGameController", Vector3.zero, Quaternion.identity);
+        
+        if(SpawnedObject == null)
+            Debug.LogWarning("Should have instantiated controller, but controller is null!");
     }
 
     private void LateUpdate()

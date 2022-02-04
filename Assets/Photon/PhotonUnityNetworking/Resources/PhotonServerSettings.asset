@@ -73,6 +73,12 @@ MonoBehaviour:
   - RPC_SyncTurnName
   - FailState
   - RPC_SyncGameMode
+  - RPC_ServerShuffleCards
+  - RPC_UpdateClientCards
+  - RPC_UpdateClientShuffle
+  - RPC_ShuffleClients
+  - RPC_ServerEndTurn
+  - RPC_SyncTurn
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

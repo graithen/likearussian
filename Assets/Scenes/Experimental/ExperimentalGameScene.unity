@@ -132,7 +132,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 380756020}
+  - component: {fileID: 380756022}
   - component: {fileID: 380756019}
+  - component: {fileID: 380756021}
+  - component: {fileID: 380756023}
   m_Layer: 0
   m_Name: NetworkUtility
   m_TagString: NetworkUtility
@@ -167,6 +170,78 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &380756021
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 380756018}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5909b8c93d39559409aeeaefdf39db2f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cardsHand: 000000000100000002000000030000000400000005000000
+  cardsShuffled: 
+  DrawCount: 0
+  DrawnCardArray: 000000000000000000000000000000000000000000000000
+  Controllers: []
+  StartupDisableObject: []
+  PlayerTurn: 0
+  IsPlayerTurn: 0
+  Forfeit: 0
+  GameOverPanel: {fileID: 0}
+  TurnName: {fileID: 0}
+  PotText: {fileID: 0}
+  ScoreText: {fileID: 0}
+  ScoreBoard: {fileID: 0}
+  Pot: 12
+  Score: 0
+  IsGameOver: 0
+  WinnerName: 
+  LosersList: 
+  WinnerText: {fileID: 0}
+  LosersText: {fileID: 0}
+  GameRematchButton: {fileID: 0}
+  LocalController: {fileID: 0}
+  LocalControllerScript: {fileID: 0}
+  TurnNumber: 0
+--- !u!114 &380756022
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 380756018}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 1
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
+--- !u!114 &380756023
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 380756018}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a1b3bda60e9e804f87fd1e5d20a885a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TurnDuration: 20
 --- !u!1 &534818133
 GameObject:
   m_ObjectHideFlags: 0

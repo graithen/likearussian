@@ -205,9 +205,9 @@ public class NetworkController : MonoBehaviourPunCallbacks
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            if (PhotonNetwork.CurrentRoom.PlayerCount > 1)
+            if (PhotonNetwork.CurrentRoom.PlayerCount > 0)
             {
-                LoadScene("GameScene");
+                LoadScene("ExperimentalGameScene");
             }
             if (PhotonNetwork.CurrentRoom.PlayerCount <= 1)
             {
